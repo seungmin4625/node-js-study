@@ -2,6 +2,8 @@ const path = require('path');
 
 const express = require('express');
 const bodyParser = require('body-parser');
+const session = require('express-session');
+const SequelizeStore = require('connect-session-sequelize')(session.Store);
 
 const errorController = require('./controllers/error');
 const sequelize = require('./util/database');
@@ -23,6 +25,17 @@ const authRoutes = require('./routes/auth');
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(
+  // session({ secret: 'my secret', resave: false, saveUninitialized: false })
+  session({
+    secret: 'my secret',
+    store: new SequelizeStore({
+      db: sequelize,
+    }),
+    resave: false,
+    proxy: true,
+  })
+);
 
 app.use((req, res, next) => {
   User.findByPk(1)
@@ -69,7 +82,7 @@ sequelize
     // console.log(user);
     return user.createCart();
   })
-  .then(cart => {
+  .then((cart) => {
     app.listen(3000);
   })
   .catch((err) => {
