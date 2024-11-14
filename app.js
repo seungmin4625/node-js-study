@@ -53,14 +53,6 @@ app.use((req, res, next) => {
     .catch((err) => console.log(err));
 });
 
-// app.use((req, res, next) => {
-//   User.findByPk(1)
-//     .then((user) => {
-//       req.user = user;
-//       next();
-//     })
-//     .catch((err) => console.log(err));
-// });
 app.use((req, res, next) => {
   res.locals.isAuthenticated = req.session.isLoggedIn;
   res.locals.csrfToken = req.csrfToken();
